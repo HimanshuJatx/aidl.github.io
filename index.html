@@ -115,31 +115,6 @@
             color: var(--primary); 
             font-weight: 700;
         }
-        
-        /* Interactive Upload Button */
-        .upload-btn {
-            background-color: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: none;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        .upload-btn:hover { 
-            background-color: var(--primary-light); 
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(46, 125, 50, 0.2);
-        }
-        .upload-btn:active { transform: scale(0.95); }
 
         /* --- NAVIGATION --- */
         .tabs {
@@ -312,7 +287,6 @@
 
 <div class="container">
     
-    <!-- HEADER -->
     <header>
         <div>
             <h1>
@@ -322,17 +296,11 @@
                 EcoCampus Monitor
             </h1>
             <p style="color: var(--text-muted); margin-top: 5px; margin-left: 4px;">
-                Observing sustainable practices from: <strong id="filename" style="color: var(--primary);">Sample Data</strong>
+                Observing sustainable practices from: <strong id="filename" style="color: var(--primary);">Akshat.csv (Loaded)</strong>
             </p>
         </div>
-        <label class="upload-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            Upload CSV
-            <input type="file" id="csvFile" accept=".csv" class="hidden">
-        </label>
-    </header>
+        </header>
 
-    <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="setTab('overview')">Overview</button>
         <button class="tab-btn" onclick="setTab('water')">Water Conservation</button>
@@ -340,20 +308,39 @@
         <button class="tab-btn" onclick="setTab('air')">Air & Traffic</button>
     </div>
 
-    <!-- CONTENT -->
     <div id="content"></div>
 
 </div>
 
 <script>
 /* --- 1. DATA PARSING --- */
-const DEFAULT_CSV = `
+
+// Hardcoded data from Akshat.csv
+const HARDCODED_DATA = `
 "Timestamp","Username","Name","Institute Name","Location","Traffic","Factory?","Construction?","Dust/Smoke","Odor","Air Comments","Water Condition","Fixture Type","Obs Type","Leak Cond","Water Amount","Water Comments","Bin Loc","Bin Type","Bin Level","Segregated?","Contamination","Waste Comments","Needs Improvement?","Suggestions"
-"2025/11/27 3:34:50","akshat@gmail.com","Akshat Sharma","JECRC","Cafeteria","Medium","Yes","Yes","yes","slight","Normal","Average (Minor issues)","Water Cooler","Leak Check","Dripping","35","","Hostel Corridor","General Waste","Almost Full","No","Wet waste in Dry Bin","","Yes","Awareness should be spread about wastage prevention methods"
-"2025/11/27 9:08:47","saurabh@gmail.com","Saurabh","JECRC","Classroom Block","High","Yes","Yes","yes","Moderate","","Broken / Not working","Water Cooler","Manual","Steady Flow","78","","Garden","General Waste","Empty","Yes","Food in Recycling","","Yes","No"
-"2025/11/27 8:34:27","tanish@gmail.com","Tanish Soni","JECRC","Classroom Block","Medium","No","Yes","yes","slight","","Good (No issues)","Toilet","Leak Check","Dripping","5","","Cafeteria","General Waste","Partially Filled","Yes","Wet waste in Dry Bin","","Yes","Road quality should be improved"
-"2025/11/27 9:08:47","deepak@gmail.com","Deepak","JECRC","Main Entrance","Medium","No","No","yes","slight","","Poor (Needs maintenance)","Other","Leak Check","Dripping","33","","Cafeteria","Recycling","Empty","Yes","Plastic in Compost","","Yes","No"
-"2025/11/28 1:52:39","sheebu@gmail.com","Sheebu","JECRC","Main Entrance","High","Yeah","Yes","yes","none","Fresh","Good (No issues)","Other","Manual","No Leakage","5","","Cafeteria","Recycling","Overflowing","No","Plastic","","Yes","More bins needed"
+"2025/11/27 3:34:50 PM GMT+5:30","akshatsharma7487@gmail.com","Akshat Sharma","JECRC University","Cafeteria Area","Medium","Yes","Yes","yes","slight","Normal","Average (Minor issues)","Water Cooler","Leak Check","Dripping","35","","Hostel Corridor;Classroom Hallway","General Waste","Almost Full","No","Wet waste in Dry Bin","","Yes","Awareness should be spread about wastage prevention methods and people need to step up"
+"2025/11/27 3:38:55 PM GMT+5:30","anuragmac15@gmail.com","Anurag Nagar","JECRC U","Cafeteria Area","Medium","DONT KNOW","Yes","yes","Moderate","Fair","Average (Minor issues)","Other","General Observation","No Leakage","10","no","Cafeteria;Hostel Corridor","General Waste","Partially Filled","No","Other","no","Yes","dont konw"
+"2025/11/27 3:45:04 PM GMT+5:30","aryankhare2821@gmail.com","Aryan khare","Jecrc ","Parking Area","Low","No","No","yes","Strong","Very bad","Broken / Not working","Other","General Observation","No Leakage","10","","Hostel Corridor","General Waste","Partially Filled","Yes","Food in Recycling","","No","Update college "
+"2025/11/27 3:46:55 PM GMT+5:30","jat.1.2.3.4.5.6.7.8.9.hc@gmail.com","Himanshu Choudhay","jecrc ubinvercity","Cafeteria Area","Medium","JECRC Univericity","Yes","yes","slight","moderate","Average (Minor issues)","Irrigation Tap","General Observation","Dripping","30","yws there was some water usage ","Cafeteria","Recycling","Almost Full","Yes","Plastic in Compost","yes there was some","Yes","good"
+"2025/11/27 4:23:51 PM GMT+5:30","sharmashivanshi917@gmail.com","Shivanshi Sharma ","LBS College ","Classroom Block","Medium","No","No","No","none","Not good actually!","Good (No issues)","Water Cooler","General Observation","Dripping","12 litres ","Provide mineral water ","Cafeteria","General Waste","Almost Full","No","Other","Clean dustbin regularly ","Yes","Person who throws waste at campus (not in dustbin) should be punished "
+"2025/11/27 4:31:27 PM GMT+5:30","anujs434971@gmail.com","ANUJ Bhadouriya ","Jecrc university ","Parking Area","Low","No","Yes","yes","none","","Average (Minor issues)","Toilet","Leak Check","Steady Flow","4","","Classroom Hallway","General Waste","Empty","No","Food in Recycling","","Maybe","No"
+"2025/11/27 4:33:02 PM GMT+5:30","manavjoshi713@gmail.com","Manav joshi","Jecrc university ","Playground","Low","No","Yes","yes","Moderate","Nope","Average (Minor issues)","Toilet","Manual Water Use Reading","No Leakage","7","","Classroom Hallway","Compost","Overflowing","Yes","Plastic in Compost","6","No","1"
+"2025/11/27 4:55:18 PM GMT+5:30","yashbbot@gmail.com","Yash Gupta ","Jec","Hostel","Medium","No","Yes","No","slight","","Average (Minor issues)","Toilet","Manual Water Use Reading","Dripping","6","8","Hostel Corridor","General Waste","Overflowing","No","Food in Recycling","","Yes","By good providing good cg to students "
+"2025/11/27 5:47:10 PM GMT+5:30","harshitverma26h@gmail.com","harshit verma ","jecrc university ","Hostel","Medium","no","Yes","No","none","","Average (Minor issues)","Shower","Manual Water Use Reading","Steady Flow","4","","Garden Area","Recycling","Overflowing","Yes","Plastic in Compost","","No","no"
+"2025/11/27 5:56:14 PM GMT+5:30","vanshikaasharma7@gmail.com","Vanshika sharma ","Rawat group of college ","Playground","Medium","No","No","No","slight","","Average (Minor issues)","Other","General Observation","No Leakage","30 liters ","","Cafeteria;Classroom Hallway;Library;Garden Area","General Waste","Partially Filled","Yes","Plastic in Compost","Lack of public awareness regarding the environmental impact of improper disposal was observed ","Maybe","Focus on enhanced learning environments."
+"2025/11/27 5:59:35 PM GMT+5:30","vsnshshh0007@gmail.com","Tanmay sharma ","Tanmay sharma ","Playground","Low","No","No","No","none","Good ","Good (No issues)","Water Cooler","Manual Water Use Reading","No Leakage","15","","Other","Recycling","Partially Filled","No","Wet waste in Dry Bin","","Maybe","Plant tree "
+"2025/11/27 6:00:48 PM GMT+5:30","brajrajkaloya4@gmail.com","Yuvraj Sain","Ambedkar law University ","Cafeteria Area","Low","No","No","No","slight","Good ","Poor (Needs maintenance)","Shower","Manual Water Use Reading","No Leakage","10000000","Nooooo","Library","General Waste","Empty","No","Plastic in Compost","","Yes","Everyone should take responsibility not to impose only on others."
+"2025/11/27 6:02:10 PM GMT+5:30","ravi06drolia@gmail.com","Ravi Drolia","MNIT Jaipur","Cafeteria Area","High","yes but i can't say","Yes","yes","Strong","","Average (Minor issues)","Water Cooler","Leak Check","Dripping","10Lt","","Cafeteria;Hostel Corridor;Classroom Hallway;Library;Garden Area;Parking Lot","General Waste","Partially Filled","No","Plastic in Compost","","Yes","what can i say "
+"2025/11/27 6:06:39 PM GMT+5:30","aashishkhare8@gmail.com","Aashish","NIT JAMSHEDPUR ","Hostel","Medium","No","No","No","slight","No","Average (Minor issues)","Water Cooler","Leak Check","No Leakage","100000","","Other","Recycling","Almost Full","No","Plastic in Compost","","No","No"
+"2025/11/27 6:11:06 PM GMT+5:30","nr997492@gmail.com","Neeraj Rajput ","Jecrc university ","Cafeteria Area","Medium","No","Yes","yes","slight","","Average (Minor issues)","Toilet","Manual Water Use Reading","Dripping","250 litre ","","Hostel Corridor","General Waste","Almost Full","Yes","Plastic in Compost","","Yes","Check "
+"2025/11/27 6:25:02 PM GMT+5:30","sainipiyus2006@gmail.com","Piyush Saini","Indian Institute Of Information Technology, Surat","Other (Short answer)","Low","No","Yes","No","none","Good ","Good (No issues)","Sink","General Observation","No Leakage","5","","Other","General Waste","Partially Filled","No","Other","","No","No"
+"2025/11/27 6:31:42 PM GMT+5:30","tusharsharmats20074@gmail.com","Tushar Sharma ","Jecrc university ","Cafeteria Area","Low","That's nice ","Yes","yes","none","That's good ","Good (No issues)","Sink","Leak Check","Dripping","That's nice ","That's good ","Cafeteria","General Waste","Empty","Yes","Food in Recycling","That's good ","Yes","That's goof "
+"2025/11/27 6:42:06 PM GMT+5:30","kuldeeppatel2052007@gmail.com","Kuldeep","Jecrc","Classroom Block","Medium","Yes","Yes","yes","slight","Too bad ","Good (No issues)","Other","General Observation","No Leakage","500","","Cafeteria;Hostel Corridor;Classroom Hallway;Library;Garden Area;Parking Lot","General Waste","Partially Filled","No","Plastic in Compost","","Yes","Need more trees and greenery "
+"2025/11/27 8:02:50 PM GMT+5:30","lattaajay@gmail.com","Saurabh ","JECRC University ","Classroom Block","High","Yes","Yes","yes","Moderate","","Broken / Not working","Water Cooler","Manual Water Use Reading","Steady Flow","78","","Garden Area","General Waste","Empty","Yes","Food in Recycling","","Yes","No"
+"2025/11/27 8:34:27 PM GMT+5:30","tanishssoni1102www.m@gmail.com","Tanish Soni ","JECRC University ","Classroom Block","Medium","No","Yes","yes","slight","97","Good (No issues)","Toilet","Leak Check","Dripping","5","","Cafeteria","General Waste","Partially Filled","Yes","Wet waste in Dry Bin","","Yes","Road quality should be improved "
+"2025/11/27 9:08:47 PM GMT+5:30","kumardeepak121006@gmail.com","Deepak ","Jecrc","Main Entrance","Medium","No","No","yes","slight","","Poor (Needs maintenance)","Other","Leak Check","Dripping","33","","Cafeteria","Recycling","Empty","Yes","Plastic in Compost","","Yes","No"
+"2025/11/28 1:52:39 AM GMT+5:30","mohdsheebu8445@gmail.com","Sheebu ","Jecrc university ","Main Entrance","High","Yeah ","Yes","yes","none","Fresh ","Good (No issues)","Other","Manual Water Use Reading","No Leakage","5 ltr ","","Cafeteria","Recycling","Overflowing","No","Food in Recycling","","No","According to me, all is well"
+"2025/11/28 8:33:24 PM GMT+5:30","aayush131000@gmail.com","Ayush ","Jecrc ","Cafeteria Area","High","No idea","Yes","No","slight","Poor","Good (No issues)","Toilet","Manual Water Use Reading","Dripping","No idea ","","Cafeteria;Library","General Waste","Almost Full","No","Plastic in Compost","","Yes","."
 `;
 
 let appData = [];
@@ -470,7 +457,7 @@ function renderOverview() {
     const waterIssues = appData.filter(d => d.waterCond.includes('Broken') || d.waterCond.includes('Poor')).length;
     const binIssues = appData.filter(d => d.binLevel.includes('Full') || d.binLevel.includes('Overflowing')).length;
     const segCount = appData.filter(d => d.segregated.toLowerCase() === 'yes').length;
-    const segPercent = Math.round((segCount/total)*100);
+    const segPercent = total > 0 ? Math.round((segCount/total)*100) : 0;
 
     // KPI Cards with IDs for animation
     let html = '<div class="grid-4">';
@@ -588,21 +575,10 @@ function setTab(tab) {
     }, 200);
 }
 
-appData = parseCSV(DEFAULT_CSV);
+// Initialize with Hardcoded Data
+appData = parseCSV(HARDCODED_DATA);
 renderOverview();
 
-document.getElementById('csvFile').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            appData = parseCSV(e.target.result);
-            document.getElementById('filename').textContent = file.name;
-            renderOverview();
-        };
-        reader.readAsText(file);
-    }
-});
 </script>
 
 </body>
