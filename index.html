@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCampus Monitor // Green Initiative</title>
+    <style>
+        /* --- ECO-FRIENDLY THEME VARIABLES --- */
+        :root {
+            --bg-body: #f1f8e9;
+            --bg-card: #ffffff;
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-faint: #e8f5e9;
+            --accent: #f9a825;
+            --danger: #d32f2f;
+            --text-main: #1b5e20;
+            --text-body: #37474f;
+            --text-muted: #78909c;
+            --border: #c8e6c9;
+            --font-sans: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --shadow: 0 10px 30px -10px rgba(46, 125, 50, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            padding: 20px;
+            min-height: 100vh;
+            background-image: radial-gradient(#c8e6c9 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes growBar {
+            0% { transform: scaleY(0); }
+            100% { transform: scaleY(1); }
+        }
+
+        @keyframes spinIn {
+            0% { transform: rotate(-90deg) scale(0.8); opacity: 0; }
+            100% { transform: rotate(0deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes pulseSoft {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(46, 125, 50, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* --- UI COMPONENTS --- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Initial state for animation */
+            opacity: 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px -5px rgba(46, 125, 50, 0.25);
+        }
+
+        /* Stagger animations for grid items */
+        .grid-4 .card:nth-child(1) { animation-delay: 0.1s; }
+        .grid-4 .card:nth-child(2) { animation-delay: 0.2s; }
+        .grid-4 .card:nth-child(3) { animation-delay: 0.3s; }
+        .grid-4 .card:nth-child(4) { animation-delay: 0.4s; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border-bottom: 4px solid var(--primary);
+            animation: slideUpFade 0.5s ease-out;
+        }
+
+        h1 { 
+            font-size: 1.6rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: var(--primary); 
+            font-weight: 700;
+        }
+        
+        /* Interactive Upload Button */
+        .upload-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-btn:hover { 
+            background-color: var(--primary-light); 
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(46, 125, 50, 0.2);
+        }
+        .upload-btn:active { transform: scale(0.95); }
+
+        /* --- NAVIGATION --- */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            animation: slideUpFade 0.6s ease-out;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid transparent;
+            background: white;
+            color: var(--text-muted);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .tab-btn:hover { color: var(--primary); transform: translateY(-2px); }
+        .tab-btn.active {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: var(--primary-faint);
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* --- LAYOUT GRIDS --- */
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; }
+
+        /* --- STAT CARDS --- */
+        .stat-card { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .stat-val { 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            margin: 5px 0; 
+            color: var(--text-body);
+            transition: color 0.3s;
+        }
+        .stat-label { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .icon-circle { 
+            width: 50px; height: 50px; 
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; 
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite; /* Floating Icon */
+        }
+
+        /* --- CHARTS --- */
+        .chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 250px;
+        }
+        
+        /* Pie Chart */
+        .pie {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            position: relative;
+            animation: spinIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        .pie::after {
+            content: "";
+            position: absolute;
+            inset: 60px;
+            background: var(--bg-card);
+            border-radius: 50%;
+        }
+        
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 180px;
+            width: 100%;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .bar {
+            width: 80%;
+            border-radius: 8px 8px 0 0;
+            min-height: 4px;
+            transform-origin: bottom;
+            animation: growBar 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        .bar:hover {
+            filter: brightness(1.1);
+            cursor: pointer;
+        }
+        .bar-label { font-size: 0.8rem; margin-top: 8px; color: var(--text-muted); font-weight: 500; }
+        .bar-val-text { font-size: 0.9rem; font-weight: bold; margin-bottom: 4px; color: var(--text-body); animation: slideUpFade 0.5s 0.5s forwards; opacity: 0; }
+
+        /* Legend */
+        .legend { display: flex; gap: 15px; margin-top: 20px; font-size: 0.85rem; flex-wrap: wrap; justify-content: center; animation: slideUpFade 0.8s ease-out; }
+        .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-body); font-weight: 500; }
+        .dot { width: 12px; height: 12px; border-radius: 4px; }
+
+        /* Tables & Lists */
+        .suggestion-list { max-height: 350px; overflow-y: auto; padding-right: 10px; }
+        .suggestion-item {
+            padding: 16px;
+            background: var(--primary-faint);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .suggestion-item:hover {
+            transform: translateX(5px);
+            background: #e0f2f1;
+        }
+        .suggestion-text { font-size: 0.95rem; font-style: italic; color: var(--text-body); line-height: 1.5; }
+        .suggestion-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem; }
+        th { text-align: left; padding: 12px 16px; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid var(--border); }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-body); transition: background 0.2s; }
+        tr { transition: background 0.2s; }
+        tr:hover td { background-color: var(--primary-faint); }
+        tr:last-child td { border-bottom: none; }
+
+        /* Utils */
+        .hidden { display: none; }
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; transition: transform 0.2s; }
+        .tag:hover { transform: scale(1.1); }
+        .tag.High { background: #ffebee; color: #c62828; }
+        .tag.Medium { background: #fff8e1; color: #f57f17; }
+        .tag.Low { background: #e8f5e9; color: #2e7d32; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- HEADER -->
+    <header>
+        <div>
+            <h1>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: pulseSoft 3s infinite;">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+                EcoCampus Monitor
+            </h1>
+            <p style="color: var(--text-muted); margin-top: 5px; margin-left: 4px;">
+                Observing sustainable practices from: <strong id="filename" style="color: var(--primary);">Sample Data</strong>
+            </p>
+        </div>
+        <label class="upload-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Upload CSV
+            <input type="file" id="csvFile" accept=".csv" class="hidden">
+        </label>
+    </header>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="setTab('overview')">Overview</button>
+        <button class="tab-btn" onclick="setTab('water')">Water Conservation</button>
+        <button class="tab-btn" onclick="setTab('waste')">Waste Management</button>
+        <button class="tab-btn" onclick="setTab('air')">Air & Traffic</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content"></div>
+
+</div>
+
+<script>
+/* --- 1. DATA PARSING --- */
+const DEFAULT_CSV = `
+"Timestamp","Username","Name","Institute Name","Location","Traffic","Factory?","Construction?","Dust/Smoke","Odor","Air Comments","Water Condition","Fixture Type","Obs Type","Leak Cond","Water Amount","Water Comments","Bin Loc","Bin Type","Bin Level","Segregated?","Contamination","Waste Comments","Needs Improvement?","Suggestions"
+"2025/11/27 3:34:50","akshat@gmail.com","Akshat Sharma","JECRC","Cafeteria","Medium","Yes","Yes","yes","slight","Normal","Average (Minor issues)","Water Cooler","Leak Check","Dripping","35","","Hostel Corridor","General Waste","Almost Full","No","Wet waste in Dry Bin","","Yes","Awareness should be spread about wastage prevention methods"
+"2025/11/27 9:08:47","saurabh@gmail.com","Saurabh","JECRC","Classroom Block","High","Yes","Yes","yes","Moderate","","Broken / Not working","Water Cooler","Manual","Steady Flow","78","","Garden","General Waste","Empty","Yes","Food in Recycling","","Yes","No"
+"2025/11/27 8:34:27","tanish@gmail.com","Tanish Soni","JECRC","Classroom Block","Medium","No","Yes","yes","slight","","Good (No issues)","Toilet","Leak Check","Dripping","5","","Cafeteria","General Waste","Partially Filled","Yes","Wet waste in Dry Bin","","Yes","Road quality should be improved"
+"2025/11/27 9:08:47","deepak@gmail.com","Deepak","JECRC","Main Entrance","Medium","No","No","yes","slight","","Poor (Needs maintenance)","Other","Leak Check","Dripping","33","","Cafeteria","Recycling","Empty","Yes","Plastic in Compost","","Yes","No"
+"2025/11/28 1:52:39","sheebu@gmail.com","Sheebu","JECRC","Main Entrance","High","Yeah","Yes","yes","none","Fresh","Good (No issues)","Other","Manual","No Leakage","5","","Cafeteria","Recycling","Overflowing","No","Plastic","","Yes","More bins needed"
+`;
+
+let appData = [];
+
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const splitLine = (str) => {
+        const res = [];
+        let inQuote = false;
+        let buf = '';
+        for (let i = 0; i < str.length; i++) {
+            if (str[i] === '"') { inQuote = !inQuote; continue; }
+            if (str[i] === ',' && !inQuote) { res.push(buf.trim()); buf = ''; }
+            else { buf += str[i]; }
+        }
+        res.push(buf.trim());
+        return res;
+    };
+
+    return lines.slice(1).map(line => {
+        const cols = splitLine(line);
+        return {
+            name: cols[2] || 'Anonymous',
+            location: cols[4] || 'Unknown',
+            traffic: cols[5] || 'Unknown',
+            waterCond: cols[11] || '',
+            fixture: cols[12] || '',
+            leak: cols[14] || '',
+            binLevel: cols[19] || '',
+            segregated: cols[20] || 'No',
+            suggestion: cols[24] || ''
+        };
+    });
+}
+
+/* --- 2. ANIMATION HELPERS --- */
+function animateValue(obj, start, end, duration) {
+    if(!obj) return;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        // Handle percentage strings
+        let isPercent = typeof end === 'string' && end.includes('%');
+        let target = parseFloat(end);
+        let val = Math.floor(progress * (target - start) + start);
+        obj.innerHTML = isPercent ? val + '%' : val;
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+/* --- 3. RENDER FUNCTIONS --- */
+
+const StatCard = (label, val, color, iconPath, id) => `
+    <div class="card stat-card">
+        <div>
+            <div class="stat-label">${label}</div>
+            <div class="stat-val" id="${id}" style="color:${color}">0</div>
+        </div>
+        <div class="icon-circle" style="background-color:${color}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${iconPath}</svg>
+        </div>
+    </div>
+`;
+
+function PieChart(data, colors) {
+    const total = Object.values(data).reduce((a,b)=>a+b, 0);
+    let deg = 0;
+    let gradient = [];
+    let legend = '';
+    
+    Object.keys(data).forEach((key, i) => {
+        const val = data[key];
+        const slice = (val/total)*360;
+        const color = colors[i % colors.length];
+        gradient.push(`${color} ${deg}deg ${deg + slice}deg`);
+        deg += slice;
+        legend += `<div class="legend-item"><div class="dot" style="background:${color}"></div>${key} (${val})</div>`;
+    });
+    
+    return `
+        <div class="chart-container">
+            <div class="pie" style="background: conic-gradient(${gradient.join(', ')})"></div>
+            <div class="legend">${legend}</div>
+        </div>
+    `;
+}
+
+function BarChart(data, colors) {
+    const max = Math.max(...Object.values(data)) || 1;
+    const bars = Object.keys(data).map((key, i) => {
+        const val = data[key];
+        const h = (val/max)*100;
+        const color = colors[i % colors.length];
+        return `
+            <div class="bar-group">
+                <div class="bar-val-text" style="color:${color}">${val}</div>
+                <div class="bar" style="height:${h}%; background:${color}"></div>
+                <div class="bar-label">${key}</div>
+            </div>
+        `;
+    }).join('');
+    
+    return `<div class="chart-container"><div class="bar-chart">${bars}</div></div>`;
+}
+
+/* --- 4. PAGE LOGIC --- */
+
+function renderOverview() {
+    const total = appData.length;
+    const waterIssues = appData.filter(d => d.waterCond.includes('Broken') || d.waterCond.includes('Poor')).length;
+    const binIssues = appData.filter(d => d.binLevel.includes('Full') || d.binLevel.includes('Overflowing')).length;
+    const segCount = appData.filter(d => d.segregated.toLowerCase() === 'yes').length;
+    const segPercent = Math.round((segCount/total)*100);
+
+    // KPI Cards with IDs for animation
+    let html = '<div class="grid-4">';
+    html += StatCard('Total Reports', total, '#2e7d32', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>', 'stat-total');
+    html += StatCard('Critical Water Issues', waterIssues, '#d32f2f', '<path d="M12 2.69l5.74 5.88a7 7 0 1 1-9.9 0l4.16-4.3Z"></path>', 'stat-water');
+    html += StatCard('Full/Overflowing Bins', binIssues, '#f9a825', '<polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>', 'stat-bin');
+    html += StatCard('Proper Segregation', segPercent+'%', '#4caf50', '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>', 'stat-seg');
+    html += '</div>';
+
+    // Recent Suggestions
+    const suggestions = appData.filter(d => d.suggestion).map((d, i) => `
+        <div class="suggestion-item" style="animation: slideUpFade 0.5s ease-out ${i * 0.1}s backwards;">
+            <p class="suggestion-text">"${d.suggestion}"</p>
+            <div class="suggestion-meta">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>${d.location}</span>
+                <span>${d.name}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    html += `<div class="card" style="margin-top:20px; animation-delay: 0.4s;">
+        <h3 style="margin-bottom:15px; color:var(--text-main); font-size:1.1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px; vertical-align:text-bottom;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Community Voices & Suggestions
+        </h3>
+        <div class="suggestion-list">${suggestions || '<p>No suggestions found.</p>'}</div>
+    </div>`;
+
+    document.getElementById('content').innerHTML = html;
+
+    // Trigger Number Counters
+    setTimeout(() => {
+        animateValue(document.getElementById('stat-total'), 0, total, 1000);
+        animateValue(document.getElementById('stat-water'), 0, waterIssues, 1000);
+        animateValue(document.getElementById('stat-bin'), 0, binIssues, 1000);
+        animateValue(document.getElementById('stat-seg'), 0, segPercent+'%', 1000);
+    }, 100);
+}
+
+function renderWater() {
+    const conditions = { 'Good':0, 'Average':0, 'Critical':0 };
+    appData.forEach(d => {
+        if(d.waterCond.includes('Good')) conditions.Good++;
+        else if(d.waterCond.includes('Average')) conditions.Average++;
+        else conditions.Critical++;
+    });
+
+    const leaks = appData.filter(d => d.leak && d.leak !== 'No Leakage').map((d, i) => `
+        <tr style="animation: slideUpFade 0.3s ease-out ${i * 0.05}s backwards;">
+            <td>${d.location}</td>
+            <td>${d.fixture}</td>
+            <td style="color:#d32f2f; font-weight:600;">${d.leak}</td>
+        </tr>
+    `).join('');
+
+    let html = '<div class="grid-2">';
+    html += `<div class="card"><h3>Fixture Condition</h3>${BarChart(conditions, ['#4caf50', '#f9a825', '#d32f2f'])}</div>`;
+    html += `<div class="card" style="animation-delay: 0.2s"><h3>Active Leakages</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Location</th><th>Fixture</th><th>Issue</th></tr></thead><tbody>${leaks}</tbody></table></div>
+    </div>`;
+    html += '</div>';
+    document.getElementById('content').innerHTML = html;
+}
+
+function renderWaste() {
+    const bins = {};
+    appData.forEach(d => { 
+        let k = d.binLevel; 
+        if(k) bins[k] = (bins[k]||0)+1 
+    });
+    
+    const seg = { 'Yes':0, 'No':0 };
+    appData.forEach(d => { if(d.segregated==='Yes') seg.Yes++; else seg.No++; });
+
+    let html = '<div class="grid-2">';
+    html += `<div class="card"><h3>Bin Capacity Status</h3>${BarChart(bins, ['#2196f3', '#4caf50', '#f9a825', '#d32f2f'])}</div>`;
+    html += `<div class="card" style="animation-delay: 0.2s"><h3>Segregation Compliance</h3>${PieChart(seg, ['#4caf50', '#d32f2f'])}</div>`;
+    html += '</div>';
+    document.getElementById('content').innerHTML = html;
+}
+
+function renderAir() {
+    const rows = appData.map((d, i) => `
+        <tr style="animation: slideUpFade 0.3s ease-out ${i * 0.05}s backwards;">
+            <td>${d.location}</td>
+            <td><span class="tag ${d.traffic}">${d.traffic}</span></td>
+            <td>${d.name}</td>
+        </tr>
+    `).join('');
+
+    let html = `<div class="card"><h3>Air Quality & Traffic Logs</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Area</th><th>Traffic Density</th><th>Observer</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>`;
+    document.getElementById('content').innerHTML = html;
+}
+
+/* --- 5. INIT --- */
+function setTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const content = document.getElementById('content');
+    content.style.opacity = '0';
+    content.style.transform = 'translateY(10px)';
+    
+    setTimeout(() => {
+        if(tab==='overview') renderOverview();
+        if(tab==='water') renderWater();
+        if(tab==='waste') renderWaste();
+        if(tab==='air') renderAir();
+        
+        content.style.transition = 'all 0.3s ease-out';
+        content.style.opacity = '1';
+        content.style.transform = 'translateY(0)';
+    }, 200);
+}
+
+appData = parseCSV(DEFAULT_CSV);
+renderOverview();
+
+document.getElementById('csvFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            appData = parseCSV(e.target.result);
+            document.getElementById('filename').textContent = file.name;
+            renderOverview();
+        };
+        reader.readAsText(file);
+    }
+});
+</script>
+
+</body>
+</html>
