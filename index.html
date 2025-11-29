@@ -287,6 +287,7 @@
 
 <div class="container">
     
+    <!-- HEADER -->
     <header>
         <div>
             <h1>
@@ -296,11 +297,13 @@
                 EcoCampus Monitor
             </h1>
             <p style="color: var(--text-muted); margin-top: 5px; margin-left: 4px;">
-                Observing sustainable practices from: <strong id="filename" style="color: var(--primary);">Akshat.csv (Loaded)</strong>
+                Observing sustainable practices from: <strong style="color: var(--primary);">Akshat.csv (Static)</strong>
             </p>
         </div>
-        </header>
+        <!-- Upload button removed -->
+    </header>
 
+    <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="setTab('overview')">Overview</button>
         <button class="tab-btn" onclick="setTab('water')">Water Conservation</button>
@@ -308,16 +311,15 @@
         <button class="tab-btn" onclick="setTab('air')">Air & Traffic</button>
     </div>
 
+    <!-- CONTENT -->
     <div id="content"></div>
 
 </div>
 
 <script>
 /* --- 1. DATA PARSING --- */
-
-// Hardcoded data from Akshat.csv
-const HARDCODED_DATA = `
-"Timestamp","Username","Name","Institute Name","Location","Traffic","Factory?","Construction?","Dust/Smoke","Odor","Air Comments","Water Condition","Fixture Type","Obs Type","Leak Cond","Water Amount","Water Comments","Bin Loc","Bin Type","Bin Level","Segregated?","Contamination","Waste Comments","Needs Improvement?","Suggestions"
+const HARDCODED_CSV = `
+"Timestamp","Username","  Name   ","Institute Name","Location of Observation  ","1.Vehicle Traffic Density in the Area","2.Is ther any hazardous factory nearby the institute?","3.Is there any construction activity nearby?","4.Visible Dust or Smoke in the Area?","5.Any noticeable odor in the environment?","6.General Air Quality Comments (Optional)","7.What is the current condition of the water fixture?","8.Type of Water Fixture Observed","9.Observation Type","10.If Leak Check: What is the leak condition?","11.How much water was used? (Liters)","12.Additional Water Usage Comments (Optional)","13.Waste Bin Location","14.Type of Waste Bin Observed"," 15. Waste Bin Fill Level  ","16.Is the waste properly segregated?","17.If NOT segregated, what contamination was observed?","Additional Waste Observation Comments","Do you think this area needs environmental improvement?","Any suggestions to improve campus environmental quality?"
 "2025/11/27 3:34:50 PM GMT+5:30","akshatsharma7487@gmail.com","Akshat Sharma","JECRC University","Cafeteria Area","Medium","Yes","Yes","yes","slight","Normal","Average (Minor issues)","Water Cooler","Leak Check","Dripping","35","","Hostel Corridor;Classroom Hallway","General Waste","Almost Full","No","Wet waste in Dry Bin","","Yes","Awareness should be spread about wastage prevention methods and people need to step up"
 "2025/11/27 3:38:55 PM GMT+5:30","anuragmac15@gmail.com","Anurag Nagar","JECRC U","Cafeteria Area","Medium","DONT KNOW","Yes","yes","Moderate","Fair","Average (Minor issues)","Other","General Observation","No Leakage","10","no","Cafeteria;Hostel Corridor","General Waste","Partially Filled","No","Other","no","Yes","dont konw"
 "2025/11/27 3:45:04 PM GMT+5:30","aryankhare2821@gmail.com","Aryan khare","Jecrc ","Parking Area","Low","No","No","yes","Strong","Very bad","Broken / Not working","Other","General Observation","No Leakage","10","","Hostel Corridor","General Waste","Partially Filled","Yes","Food in Recycling","","No","Update college "
@@ -362,6 +364,7 @@ function parseCSV(text) {
 
     return lines.slice(1).map(line => {
         const cols = splitLine(line);
+        // Mapping based on Akshat.csv headers
         return {
             name: cols[2] || 'Anonymous',
             location: cols[4] || 'Unknown',
@@ -575,10 +578,9 @@ function setTab(tab) {
     }, 200);
 }
 
-// Initialize with Hardcoded Data
-appData = parseCSV(HARDCODED_DATA);
+// Initial Data Load
+appData = parseCSV(HARDCODED_CSV);
 renderOverview();
-
 </script>
 
 </body>
